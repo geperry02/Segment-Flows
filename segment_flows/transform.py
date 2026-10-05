@@ -80,11 +80,19 @@ def build(reports, dates):
             for c, (dirs, direction, reason) in per_cycle.items():
                 if direction is None:
                     direction = _majority(day_flowing)
+                    if direction:
+                        notes.append((day, c, seg, name,
+                                      f"Zero flow; used {direction} (most common flowing direction that day)"))
                 if direction is None:
                     direction = _majority(history[key])
-                    if direction is None and history[key]:
+                    if direction:
+                        notes.append((day, c, seg, name,
+                                      f"Zero flow all day; used {direction} (most common 8AM flow to date)"))
+                    elif history[key]:
                         direction = history[key][-1]
-                    if direction is None:
+                        notes.append((day, c, seg, name,
+                                      f"Zero flow all day; 8AM history tied, used most recent ({direction})"))
+                    else:
                         direction = "TD1"
                         notes.append((day, c, seg, name,
                                       "Zero flow with no 8AM history; defaulted to TD1 (+)"))
